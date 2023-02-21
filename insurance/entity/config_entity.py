@@ -26,6 +26,7 @@ class DataIngestionConfig:
             self.dataframe_file_path =os.path.join(self.data_ingestion_dir,"dataframe_file",FILE_NAME)
             self.train_file_path=os.path.join(self.data_ingestion_dir,"dataset",TRAIN_FILE_NAME)
             self.test_file_path=os.path.join(self.data_ingestion_dir,"dataset",TEST_FILE_NAME)
+            self.test_size = 0.2
         
         except Exception as e:
             raise InsuranceException(e,sys)
