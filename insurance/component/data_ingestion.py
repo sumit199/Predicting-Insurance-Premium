@@ -20,6 +20,7 @@ class DataIngestion:
     def initiate_data_ingestion(self)->artifact_entity.DataIngestionArtifact:
         try:
             #Exporting collection data as dataframe
+            logging.info(f"Exporting collection data as pandas dataframe")
             df:pd.DataFrame = utils.get_collection_as_dataframe(
                 database_name=self.data_ingestion_config.database_name, 
                 collection_name=self.data_ingestion_config.collection_name)
