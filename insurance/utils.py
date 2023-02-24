@@ -27,5 +27,17 @@ def get_collection_as_dataframe(database_name:str,collection_name:str) -> pd.Dat
             df = df.drop("_id",axis=1)
         logging.info(f"Row and columns in df: {df.shape}")
         return df
+
     except Exception as e:
         raise InsuranceException(e, sys)
+
+def write_yaml_file(file_path,data:dict):
+    try:
+        file_dir = os.path.dirname(file_path)
+        os.makedirs(file_dir,exist_ok=True)
+        with open(file_path,"w") as file_writer:
+            yaml.dump(data,file_writer)
+    except Exception as e:
+        raise SensorException(e, sys)
+
+
