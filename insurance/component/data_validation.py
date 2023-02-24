@@ -1,5 +1,6 @@
 from insurance.entity import artifact_entity
 from insurance.entity import config_entity
+from insurance import utils
 from insurance.exception import InsuranceException
 from insurance.logger import logging
 from scipy.stats import ks_2samp
