@@ -7,6 +7,7 @@ import pandas as pd
 from typing import Optional
 import os
 import sys
+from insurance.config import TARGET_COLUMN
 
 
 
@@ -18,7 +19,7 @@ class DataValidation:
         try:
             logging.info(f"{'>>'*20} Data Validation {'<<'*20}")
             self.data_validation_config = data_validation_config
-            self.data_ingestion_artifact=data_ingestion_artifact
+            self.data_ingestion_artifact = data_ingestion_artifact
             self.validation_error=dict()
         except Exception as e:
             raise InsuranceException(e, sys)
@@ -120,18 +121,18 @@ class DataValidation:
             test_df = pd.read_csv(self.data_ingestion_artifact.test_file_path)
 
             logging.info(f"Drop null values colums from train df")
-            train_df = self.drop_missing_values_column(df=train_df)
+            train_df = self.drop_missing_values_column(df=train_df,report_key_name="missing_values_within_train_dataset")
             logging.info(f"Drop null values colums from test df")
-            test_df = self.drop_missing_values_column(df=test_df)
+            test_df = self.drop_missing_values_column(df=test_df,report_key_name="missing_values_within_test_dataset")
 
            
             logging.info(f"Is all required columns present in train df")
             train_df_column_status = self.is_required_column_exist(base_df=base_df, 
-                                    current_df=train_d,report_key_name="missing_values_within_train_dataset")
+                                    current_df=train_df,report_key_name="missing_columns_within_train_dataset")
 
             logging.info(f"Is all required columns present in test df")
             test_df_column_status = self.is_required_column_exist(base_df=base_df,
-                                         current_df=test_df, report_key_name="missing_values_within_train_dataset")
+                                         current_df=test_df, report_key_name="missing_columns_within_test_dataset")
 
             if train_df_column_status:
                 logging.info(f"As all column are available in train df hence detecting data drift")
@@ -139,6 +140,15 @@ class DataValidation:
             if test_df_column_status:
                 logging.info(f"As all column are available in test df hence detecting data drift")
                 self.data_drift(base_df=base_df, current_df=test_df,report_key_name="data_drift_within_test_dataset")
-        
+
+            #write the report
+            logging.info("Write reprt in yaml file")
+            utils.write_yaml_file(file_path=self.data_validation_config.report_file_path,
+            data=self.validation_error)
+
+            data_validation_artifact = artifact_entity.DataValidationArtifact(report_file_path=self.data_validation_config.report_file_path,)
+            logging.info(f"Data validation artifact: {data_validation_artifact}")
+            return data_validation_artifact
+
         except Exception as e:
             raise InsuranceException(e, sys)
