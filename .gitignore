@@ -2,10 +2,15 @@
 __pycache__/
 *.py[cod]
 *$py.class
-
+artifact_dir
 # C extensions
 *.so
-
+prediction
+saved_models
+demotest.py
+logs
+artifact_dir
+raw_data
 # Distribution / packaging
 .Python
 build/
