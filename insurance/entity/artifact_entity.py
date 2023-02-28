@@ -14,8 +14,6 @@ class DataValidationArtifact:
 class DataTransformationArtifact:
     transformed_test_path:str
     transformed_train_path:str
-    target_encoder_path:str
-
     
 class ModelTrainingArtifact:...
 
