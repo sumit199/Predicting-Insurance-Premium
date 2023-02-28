@@ -9,7 +9,7 @@ from insurance import utils
 import numpy as np
 from sklearn.preprocessing import StandardScaler
 from scipy import stats
-from sensor.config import TARGET_COLUMN, OUTLIER_COLUMN, CATEGORICAL_COLUMN
+from insurance.config import TARGET_COLUMN, OUTLIER_COLUMN, CATEGORICAL_COLUMN
 
 class DataTransformation:
 
@@ -31,6 +31,20 @@ class DataTransformation:
             train_df = pd.read_csv(self.data_ingestion_artifact.train_file_path)
             test_df = pd.read_csv(self.data_ingestion_artifact.test_file_path)
             
+            logging.info("removing otliers from train and test dataset")
+            #removing outlier from train dataset
+            z1 = np.abs(stats.zscore(train_df[OUTLIER_COLUMN]))
+            for i in (np.where(z1>3)):
+                train_df.drop(i,inplace=True)
+            train_df.set_index( np.arange(len(train_df)),inplace=True )
+            
+            #removing outlier from train dataset
+            z1 = np.abs(stats.zscore(test_df[OUTLIER_COLUMN]))
+            for i in (np.where(z1>3)):
+                test_df.drop(i,inplace=True)
+            test_df.set_index( np.arange(len(test_df)),inplace=True )
+
+
             #selecting input feature for train and test dataframe
             input_feature_train_df=train_df.drop(TARGET_COLUMN,axis=1)
             input_feature_test_df=test_df.drop(TARGET_COLUMN,axis=1)
@@ -38,19 +52,6 @@ class DataTransformation:
             #selecting target feature for train and test dataframe
             target_feature_train_df = train_df[TARGET_COLUMN]
             target_feature_test_df = test_df[TARGET_COLUMN]
-
-            logging.info("removing otliers from train and test dataset")
-            #removing outlier from train dataset
-            z1 = np.abs(stats.zscore(input_feature_train_df[OUTLIER_COLUMN]))
-            for i in (np.where(z1>3)):
-                input_feature_train_df.drop(i,inplace=True)
-            input_feature_train_df.set_index( np.arange(len(input_feature_train_df)),inplace=True )
-            
-            #removing outlier from train dataset
-            z1 = np.abs(stats.zscore(input_feature_test_df[OUTLIER_COLUMN]))
-            for i in (np.where(z1>3)):
-                input_feature_test_df.drop(i,inplace=True)
-            input_feature_test_df.set_index( np.arange(len(input_feature_test_df)),inplace=True )
 
             logging.info("handling categorical columns")
             #handling categorical column

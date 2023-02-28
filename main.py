@@ -5,6 +5,7 @@ from insurance.utils import get_collection_as_dataframe
 from insurance.entity import config_entity 
 from insurance.component.data_ingestion import DataIngestion
 from insurance.component.data_validation import DataValidation
+from insurance.component.data_transformation import DataTransformation
 
 
 
