@@ -9,7 +9,6 @@ from insurance import utils
 import numpy as np
 from sklearn.preprocessing import StandardScaler
 from scipy import stats
-from sklearn.preprocessing import LabelEncoder
 from sensor.config import TARGET_COLUMN, OUTLIER_COLUMN, CATEGORICAL_COLUMN
 
 class DataTransformation:
@@ -40,6 +39,7 @@ class DataTransformation:
             target_feature_train_df = train_df[TARGET_COLUMN]
             target_feature_test_df = test_df[TARGET_COLUMN]
 
+            logging.info("removing otliers from train and test dataset")
             #removing outlier from train dataset
             z1 = np.abs(stats.zscore(input_feature_train_df[OUTLIER_COLUMN]))
             for i in (np.where(z1>3)):
@@ -52,12 +52,41 @@ class DataTransformation:
                 input_feature_test_df.drop(i,inplace=True)
             input_feature_test_df.set_index( np.arange(len(input_feature_test_df)),inplace=True )
 
+            logging.info("handling categorical columns")
             #handling categorical column
-            label_encoder = LabelEncoder()
-            label_encoder.fit_transform(target_feature_train_df[CATEGORICAL_COLUMN])
-            label_encoder.fit_transform(target_feature_train_df[CATEGORICAL_COLUMN])
+            input_feature_train_df = utils.encoder(df=input_feature_train_df, 
+                                CATEGORICAL_COLUMN=CATEGORICAL_COLUMN)
 
+            input_feature_test_df = utils.encoder(df=input_feature_test_df, 
+                                CATEGORICAL_COLUMN=CATEGORICAL_COLUMN)
+            
             #transforming input features
             standard_scalar = StandardScaler()
-            input_feature_train_arr = standard_scalar.transform(input_feature_train_df)
+            input_feature_train_arr = standard_scalar.fit_transform(input_feature_train_df)
             input_feature_test_arr = standard_scalar.transform(input_feature_test_df)
+
+            #target encoder
+            train_arr = np.c_[input_feature_train_arr, target_feature_train_df]
+            test_arr = np.c_[input_feature_test_arr, target_feature_test_df]
+
+            #save numpy array
+            utils.save_numpy_array_data(file_path=self.data_transformation_config.transformed_train_path,
+                                        array=train_arr)
+
+            utils.save_numpy_array_data(file_path=self.data_transformation_config.transformed_test_path,
+                                        array=test_arr)
+
+
+
+            data_transformation_artifact = artifact_entity.DataTransformationArtifact(
+                transformed_train_path = self.data_transformation_config.transformed_train_path,
+                transformed_test_path = self.data_transformation_config.transformed_test_path
+
+            )
+
+            logging.info(f"Data transformation object {data_transformation_artifact}")
+            return data_transformation_artifact
+
+
+        except Exception as e:
+            raise InsuranceException(e, sys)

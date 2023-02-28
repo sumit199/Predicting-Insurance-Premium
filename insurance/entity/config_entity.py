@@ -7,6 +7,8 @@ FILE_NAME="insurance.csv"
 TRAIN_FILE_NAME="train.csv"
 TEST_FILE_NAME="test.csv"
 
+MODEL_FILE_NAME = "model.pkl"
+
 class TrainingPipelineConfig:
    
     def __init__(self):
@@ -54,11 +56,9 @@ class DataTransformationConfig:
 
     def __init__(self, training_pipeline_config:TrainingPipelineConfig):
         try:
-            self.data_transformation_dir = os.path.join(training_pipeline_config.artifact_dir,"data_transformation")
-            self.transform_object_path = os.path.join(self.data_transformation_dir,"TRANSFORMER_OBJECT_FILE_NAME") 
+            self.data_transformation_dir = os.path.join(training_pipeline_config.artifact_dir,"data_transformation") 
             self.transformed_train_path =  os.path.join(self.data_transformation_dir,"transformed",TRAIN_FILE_NAME.replace("csv","npz"))
             self.transformed_test_path =os.path.join(self.data_transformation_dir,"transformed",TEST_FILE_NAME.replace("csv","npz"))
-            self.target_encoder_path = os.path.join(self.data_transformation_dir,"target_encoder",TARGET_ENCODER_OBJECT_FILE_NAME)
         
         except Exception as e:
             raise InsuranceException(e, sys)
