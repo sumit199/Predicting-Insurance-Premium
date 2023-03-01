@@ -15,8 +15,12 @@ class DataTransformationArtifact:
     transformed_test_path:str
     transformed_train_path:str
     
-class ModelTrainingArtifact:...
-
+@dataclass
+class ModelTrainingArtifact:
+    model_path:str
+    r2_score_train:str
+    r2_score_test:str
+    
 class ModelEvaluationArtifact:...
 
 class ModelPusherArtifact:...
