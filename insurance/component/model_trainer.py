@@ -7,13 +7,14 @@ from insurance.entity import config_entity
 from insurance.entity import artifact_entity
 from insurance import utils
 from xgboost import XGBRegressor
+from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
 from insurance.config import PARAM_XGB
 
 
 class ModelTrainer:
 
     def __init__(self, model_trainer_config:config_entity.ModelTrainingConfig,
-                 data_transformer_config:artifact_entity.DataTransformationArtifact):
+                 data_transformation_artifact:artifact_entity.DataTransformationArtifact):
         try:
             logging.info(f"{'>>'*20} Model Trainer {'<<'*20}")
             self.model_trainer_config=model_trainer_config
@@ -42,7 +43,7 @@ class ModelTrainer:
             return xgb_random.best_score_,xgb_random.best_params_           
 
         except Exception as e:
-            raise SensorException(e, sys)
+            raise InsuranceException(e, sys)
 
 
     def initiate_model_trainer(self) -> artifact_entity.ModelTrainingArtifact:
@@ -50,7 +51,7 @@ class ModelTrainer:
             
             logging.info(f"Loading train and test array.")
             train_arr = utils.load_numpy_array_data(file_path=self.data_transformation_artifact.transformed_train_path)
-            test_arr = utils.load_numpy_array_data(file_path=self.data_transformation-artifact.transformed_test_path)
+            test_arr = utils.load_numpy_array_data(file_path=self.data_transformation_artifact.transformed_test_path)
             
             logging.info(f"Splitting input and target feature from both train and test arr.")
             x_train,y_train = train_arr[:,:-1],train_arr[:,-1]
@@ -64,7 +65,7 @@ class ModelTrainer:
             r2_score_train = r2_score(y_true=y_train, y_pred=y_train_pred)
             
             logging.info(f"calculating r2 test score")
-            y_test_pred = model.predict(y_test)
+            y_test_pred = model.predict(x_test)
             r2_score_test = r2_score(y_true=y_test, y_pred=y_test_pred)
 
             logging.info(f"train score:{r2_score_train} and tests score {r2_score_test}")
@@ -94,5 +95,5 @@ class ModelTrainer:
             return model_trainer_artifact
 
         except Exception as e:
-            raise SensorException(e, sys)
+            raise InsuranceException(e, sys)
             
