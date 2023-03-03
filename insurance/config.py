@@ -17,15 +17,7 @@ mongo_client = pymongo.MongoClient(env_var.mongo_db_url)
 TARGET_COLUMN = "expenses"
 OUTLIER_COLUMN = "bmi"
 CATEGORICAL_COLUMN = ["sex","smoker","region"]
-PARAM_XGB = {
-            'n_estimators':[500],
-            'min_child_weight':[4,5], 
-            'gamma':[i/10.0 for i in range(3,6)],  
-            'subsample':[i/10.0 for i in range(6,11)],
-            'colsample_bytree':[i/10.0 for i in range(6,11)], 
-            'max_depth': [2,3,4,6,7],
-            'objective': ['reg:squarederror', 'reg:tweedie'],
-            'booster': ['gbtree', 'gblinear'],
-            'eval_metric': ['rmse'],
-            'eta': [i/10.0 for i in range(3,6)],
-            }
+PARAM_ADR = {'n_estimators':[500,1000,2000],
+             'learning_rate':[.001,0.005,0.01,.1],
+             'random_state':[1]
+             }

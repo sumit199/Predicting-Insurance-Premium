@@ -6,9 +6,11 @@ from insurance.logger import logging
 from insurance.entity import config_entity
 from insurance.entity import artifact_entity
 from insurance import utils
-from xgboost import XGBRegressor
+from sklearn.ensemble import AdaBoostRegressor
+from sklearn.tree import DecisionTreeRegressor
 from sklearn.metrics import r2_score, mean_absolute_error, mean_squared_error
-from insurance.config import PARAM_XGB
+from sklearn.model_selection import RandomizedSearchCV
+from insurance.config import PARAM_ADR
 
 
 class ModelTrainer:
@@ -26,21 +28,20 @@ class ModelTrainer:
     #training model            
     def train_model(self,X,y):
         try:
-            xgb_regressor = XGBRegressor()
-            xgb_regressor.fit(X,y)
-            return xgb_regressor
+            adb_regressor = AdaBoostRegressor()
+            adb_regressor.fit(X,y)
+            return adb_regressor
         except Exception as e:
             raise InsuranceException(e, sys)
 
     #fine tune model
     def fine_tune(self,X,y):
         try:
-            xgb = XGBRegressor()
-            n_iter_search = 100
-            xgb_random = RandomizedSearchCV(estimator= xgb, param_distributions=PARAM_XGB,
-                        n_iter=n_iter_search, cv=5)
-            xgb_random.fit(X_train, y_train)
-            return xgb_random.best_score_,xgb_random.best_params_           
+            DTR = DecisionTreeRegressor(random_state = 11, max_features = "auto",max_depth = None)
+            AdaBoost_regressor = AdaBoostRegressor(base_estimator = DTR)
+            adr_random = RandomizedSearchCV(estimator = AdaBoost_regressor , param_distributions = PARAM_ADR, cv = 5, verbose=2, random_state=42, n_jobs = 4)
+            adr_random.fit(X, y)
+            return adr_random.best_score_,adr_random.best_params_
 
         except Exception as e:
             raise InsuranceException(e, sys)
@@ -68,7 +69,7 @@ class ModelTrainer:
             y_test_pred = model.predict(x_test)
             r2_score_test = r2_score(y_true=y_test, y_pred=y_test_pred)
 
-            best_score , best_params = ModelTrainer.fine_tune( x_train, y_train)
+            best_score , best_params = ModelTrainer.fine_tune(self, x_train, y_train)
             logging.info("best_score",best_score)
 
             logging.info(f"train score:{r2_score_train} and tests score {r2_score_test}")
