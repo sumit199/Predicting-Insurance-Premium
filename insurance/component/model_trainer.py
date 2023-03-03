@@ -93,10 +93,16 @@ class ModelTrainer:
             
             logging.info(f"train score:{r2_score_train} and test score {r2_score_test}")
 
-            logging.info(f"train score with parameter:{r2_score_train_with_parameter} \
+            logging.info(f"train score with parameter:{r2_score_train_with_parameter}\
                 and test score with parameter {r2_score_test_with_parameter}")
 
-            
+            #checking if we are getting better result after fine tuning
+            if r2_score_test < r2_score_test_with_parameter:
+                logging.info("Model giving better result after fine tuning we will take those result and model")
+                r2_score_test = r2_score_test_with_parameter
+                r2_score_train = r2_score_train_with_parameter
+                model = model_with_parameter
+
             #check for overfitiing or underfitting or expected score
             logging.info(f"Checking if our model is underfitting or not")
             if r2_score_test<self.model_trainer_config.expected_score:
