@@ -68,6 +68,9 @@ class ModelTrainer:
             y_test_pred = model.predict(x_test)
             r2_score_test = r2_score(y_true=y_test, y_pred=y_test_pred)
 
+            best_score , best_params = ModelTrainer.fine_tune( x_train, y_train)
+            logging.info("best_score",best_score)
+
             logging.info(f"train score:{r2_score_train} and tests score {r2_score_test}")
             #check for overfitiing or underfitting or expected score
             logging.info(f"Checking if our model is underfitting or not")
