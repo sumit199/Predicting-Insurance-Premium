@@ -38,7 +38,7 @@ class ModelTrainer:
     def fine_tune(self,X,y):
         try:
             DTR = DecisionTreeRegressor(random_state = 11, max_features = "auto",max_depth = None)
-            AdaBoost_regressor = AdaBoostRegressor(base_estimator = DTR)
+            AdaBoost_regressor = AdaBoostRegressor(estimator = DTR)
             adr_random = RandomizedSearchCV(estimator = AdaBoost_regressor , param_distributions = PARAM_ADR, cv = 5, verbose=2, random_state=42, n_jobs = 4)
             adr_random.fit(X, y)
             return adr_random.best_score_,adr_random.best_params_
@@ -46,6 +46,13 @@ class ModelTrainer:
         except Exception as e:
             raise InsuranceException(e, sys)
 
+    def train_model_with_parameter(self,X,y,parameter):
+        try:
+            adb_regressor = AdaBoostRegressor(**parameter)
+            adb_regressor.fit(X,y)
+            return adb_regressor
+        except Exception as e:
+            raise InsuranceException(e, sys)
 
     def initiate_model_trainer(self) -> artifact_entity.ModelTrainingArtifact:
         try:
@@ -69,10 +76,27 @@ class ModelTrainer:
             y_test_pred = model.predict(x_test)
             r2_score_test = r2_score(y_true=y_test, y_pred=y_test_pred)
 
-            best_score , best_params = ModelTrainer.fine_tune(self, x_train, y_train)
-            logging.info("best_score",best_score)
+            logging.info(f"calculating best parameter")
+            best_params = self.fine_tune( x_train, y_train)
 
-            logging.info(f"train score:{r2_score_train} and tests score {r2_score_test}")
+            logging.info(f"Train the model with parameter")
+            model_with_parameter = self.train_model_with_parameter(x_train, y_train, parameter)
+
+            logging.info(f"calculating r2 test score with best parameter model")
+            y_train_pred_with_param = mod.predict(x_train)
+            r2_score_train_with_parameter = r2_score(y_true=y_test, y_pred=y_test_pred_with_param)
+
+            logging.info(f"calculating r2 test score with best parameter model")
+            y_test_pred_with_param = mod.predict(x_test)
+            r2_score_test_with_parameter = r2_score(y_true=y_test, y_pred=y_test_pred_with_param)
+            
+            
+            logging.info(f"train score:{r2_score_train} and test score {r2_score_test}")
+
+            logging.info(f"train score with parameter:{r2_score_train_with_parameter} \
+                and test score with parameter {r2_score_test_with_parameter}")
+
+            
             #check for overfitiing or underfitting or expected score
             logging.info(f"Checking if our model is underfitting or not")
             if r2_score_test<self.model_trainer_config.expected_score:
