@@ -77,6 +77,12 @@ class DataTransformation:
             utils.save_numpy_array_data(file_path=self.data_transformation_config.transformed_test_path,
                                         array=test_arr)
 
+            
+            utils.save_object(file_path=self.data_transformation_config.transform_object_path,
+             obj=standard_scalar)
+
+            utils.save_object(file_path=self.data_transformation_config.target_encoder_path,
+            obj=utils.encoder)
 
 
             data_transformation_artifact = artifact_entity.DataTransformationArtifact(
