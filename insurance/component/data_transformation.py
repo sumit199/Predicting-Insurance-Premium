@@ -7,7 +7,7 @@ from sklearn.pipeline import Pipeline
 import pandas as pd
 from insurance import utils
 import numpy as np
-from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import RobustScaler
 from scipy import stats
 from insurance.config import TARGET_COLUMN, OUTLIER_COLUMN, CATEGORICAL_COLUMN
 
@@ -30,19 +30,6 @@ class DataTransformation:
             #reading training and testing file
             train_df = pd.read_csv(self.data_ingestion_artifact.train_file_path)
             test_df = pd.read_csv(self.data_ingestion_artifact.test_file_path)
-            
-            logging.info("removing otliers from train and test dataset")
-            #removing outlier from train dataset
-            z1 = np.abs(stats.zscore(train_df[OUTLIER_COLUMN]))
-            for i in (np.where(z1>3)):
-                train_df.drop(i,inplace=True)
-            train_df.set_index( np.arange(len(train_df)),inplace=True )
-            
-            #removing outlier from train dataset
-            z1 = np.abs(stats.zscore(test_df[OUTLIER_COLUMN]))
-            for i in (np.where(z1>3)):
-                test_df.drop(i,inplace=True)
-            test_df.set_index( np.arange(len(test_df)),inplace=True )
 
 
             #selecting input feature for train and test dataframe
@@ -62,9 +49,9 @@ class DataTransformation:
                                 CATEGORICAL_COLUMN=CATEGORICAL_COLUMN)
             
             #transforming input features
-            standard_scalar = StandardScaler()
-            input_feature_train_arr = standard_scalar.fit_transform(input_feature_train_df)
-            input_feature_test_arr = standard_scalar.transform(input_feature_test_df)
+            robust_scalar = RobustScaler()
+            input_feature_train_arr = robust_scalar.fit_transform(input_feature_train_df)
+            input_feature_test_arr = robust_scalar.transform(input_feature_test_df)
 
             #target encoder
             train_arr = np.c_[input_feature_train_arr, target_feature_train_df]
@@ -79,7 +66,7 @@ class DataTransformation:
 
             
             utils.save_object(file_path=self.data_transformation_config.transform_object_path,
-             obj=standard_scalar)
+             obj=robust_scalar)
 
             utils.save_object(file_path=self.data_transformation_config.target_encoder_path,
             obj=utils.encoder)

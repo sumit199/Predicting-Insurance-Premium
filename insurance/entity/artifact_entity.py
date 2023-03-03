@@ -21,6 +21,9 @@ class ModelTrainingArtifact:
     r2_score_train:str
     r2_score_test:str
     
-class ModelEvaluationArtifact:...
+@dataclass
+class ModelEvaluationArtifact:
+    is_model_accepted:bool
+    improved_accuracy:float
 
 class ModelPusherArtifact:...
