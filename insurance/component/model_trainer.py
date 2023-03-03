@@ -41,7 +41,7 @@ class ModelTrainer:
             AdaBoost_regressor = AdaBoostRegressor(estimator = DTR)
             adr_random = RandomizedSearchCV(estimator = AdaBoost_regressor , param_distributions = PARAM_ADR, cv = 5, verbose=2, random_state=42, n_jobs = 4)
             adr_random.fit(X, y)
-            return adr_random.best_score_,adr_random.best_params_
+            return adr_random.best_params_
 
         except Exception as e:
             raise InsuranceException(e, sys)
@@ -80,14 +80,14 @@ class ModelTrainer:
             best_params = self.fine_tune( x_train, y_train)
 
             logging.info(f"Train the model with parameter")
-            model_with_parameter = self.train_model_with_parameter(x_train, y_train, parameter)
+            model_with_parameter = self.train_model_with_parameter(x_train, y_train, best_params)
 
             logging.info(f"calculating r2 test score with best parameter model")
-            y_train_pred_with_param = mod.predict(x_train)
-            r2_score_train_with_parameter = r2_score(y_true=y_test, y_pred=y_test_pred_with_param)
+            y_train_pred_with_param = model_with_parameter.predict(x_train)
+            r2_score_train_with_parameter = r2_score(y_true=y_train, y_pred=y_train_pred_with_param)
 
             logging.info(f"calculating r2 test score with best parameter model")
-            y_test_pred_with_param = mod.predict(x_test)
+            y_test_pred_with_param = model_with_parameter.predict(x_test)
             r2_score_test_with_parameter = r2_score(y_true=y_test, y_pred=y_test_pred_with_param)
             
             
@@ -117,7 +117,7 @@ class ModelTrainer:
 
             #prepare artifact
             logging.info(f"Prepare the artifact")
-            model_trainer_artifact  = artifact_entity.ModelTrainerArtifact(model_path=self.model_trainer_config.model_path, 
+            model_trainer_artifact  = artifact_entity.ModelTrainingArtifact(model_path=self.model_trainer_config.model_path, 
             r2_score_train=r2_score_train, r2_score_test=r2_score_test)
             logging.info(f"Model trainer artifact: {model_trainer_artifact}")
             return model_trainer_artifact
