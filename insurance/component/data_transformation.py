@@ -74,7 +74,9 @@ class DataTransformation:
 
             data_transformation_artifact = artifact_entity.DataTransformationArtifact(
                 transformed_train_path = self.data_transformation_config.transformed_train_path,
-                transformed_test_path = self.data_transformation_config.transformed_test_path
+                transformed_test_path = self.data_transformation_config.transformed_test_path,
+                 transform_object_path=self.data_transformation_config.transform_object_path,
+                target_encoder_path = self.data_transformation_config.target_encoder_path
 
             )
 
