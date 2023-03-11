@@ -3,7 +3,7 @@ from insurance.entity import config_entity,artifact_entity
 from insurance.exception import InsuranceException
 from insurance.logger import logging
 from insurance.utils import load_object
-from sklearn.metrics import f1_score
+from sklearn.metrics import r2_score
 import pandas  as pd
 import sys,os
 from insurance.config import TARGET_COLUMN, CATEGORICAL_COLUMN
@@ -70,7 +70,7 @@ class ModelEvaluation:
             input_arr =transformer.transform(input_feature_test_df)
             y_pred = model.predict(input_arr)
             print(f"Prediction using previous model: {y_pred[:5]}")
-            previous_model_score = f1_score(y_true=y_true, y_pred=y_pred)
+            previous_model_score = r2_score(y_true=y_true, y_pred=y_pred)
             logging.info(f"Accuracy using previous trained model: {previous_model_score}")
 
             # accuracy using current trained model
@@ -78,7 +78,7 @@ class ModelEvaluation:
             y_pred = current_model.predict(input_arr)
             y_true =test_df[TARGET_COLUMN]
             print(f"Prediction using trained model: {y_pred[:5]}")
-            current_model_score = f1_score(y_true=y_true, y_pred=y_pred)
+            current_model_score = r2_score(y_true=y_true, y_pred=y_pred)
             logging.info(f"Accuracy using current trained model: {current_model_score}")
             if current_model_score<=previous_model_score:
                 logging.info(f"Current trained model is not better than previous model")

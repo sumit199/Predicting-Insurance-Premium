@@ -85,4 +85,4 @@ class ModelResolver:
             latest_dir = self.get_latest_save_dir_path()
             return os.path.join(latest_dir,self.target_encoder_dir_name,TARGET_ENCODER_OBJECT_FILE_NAME)
         except Exception as e:
-            raise 
+            raise e
