@@ -5,7 +5,7 @@ import pandas as pd
 from insurance.utils import load_object
 import os,sys
 from datetime import datetime
-from insurance.config import CATEGORICAL_COLUMN
+from insurance.config import CATEGORICAL_COLUMN, TARGET_COLUMN
 PREDICTION_DIR="prediction"
     
 import numpy as np
