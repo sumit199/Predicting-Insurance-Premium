@@ -1,6 +1,6 @@
 import os
 from typing import Optional
-from insurance.entity.config_entity import MODEL_FILE_NAME
+from insurance.entity.config_entity import MODEL_FILE_NAME, TRANSFORMER_OBJECT_FILE_NAME, TARGET_ENCODER_OBJECT_FILE_NAME
 
 
 class ModelResolver:

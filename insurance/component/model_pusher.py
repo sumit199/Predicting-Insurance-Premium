@@ -21,7 +21,7 @@ class ModelPusher:
                 except Exception as e:
                     raise InsuranceException(e, sys)
     
-    def initiate_model_pusher(self,)->ModelPusherArtifact:
+    def initiate_model_pusher(self,)->artifact_entity.ModelPusherArtifact:
         try:
              #load object
             logging.info(f"Loading transformer model and target encoder")
@@ -46,7 +46,7 @@ class ModelPusher:
             save_object(file_path=model_path, obj=model)
             save_object(file_path=target_encoder_path, obj=target_encoder)
 
-            model_pusher_artifact = ModelPusherArtifact(pusher_model_dir=self.model_pusher_config.pusher_model_dir,
+            model_pusher_artifact = artifact_entity.ModelPusherArtifact(pusher_model_dir=self.model_pusher_config.pusher_model_dir,
                                                         saved_model_dir=self.model_pusher_config.saved_model_dir)
             logging.info(f"Model pusher artifact: {model_pusher_artifact}")
             return model_pusher_artifact

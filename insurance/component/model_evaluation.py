@@ -38,7 +38,6 @@ class ModelEvaluation:
                 model_eval_artifact = artifact_entity.ModelEvaluationArtifact(is_model_accepted=True,
                 improved_accuracy=None)
                 logging.info(f"Model evaluation artifact: {model_eval_artifact}")
-                logging("nothing")
                 return model_eval_artifact
 
             #Finding location of transformer model and target encoder
