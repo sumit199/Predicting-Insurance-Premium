@@ -1,5 +1,5 @@
 from insurance.pipeline.training_pipeline import start_training_pipeline
-from insurance.pipeline.batch_preediction import start_batch_prediction
+from insurance.pipeline.batch_prediction import start_batch_prediction
 filepath = "/config/workspace/insurance.csv"
 
 if __name__=="__main__":
