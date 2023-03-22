@@ -5,7 +5,7 @@ filepath = "/config/workspace/insurance.csv"
 if __name__=="__main__":
 
     try:
-        #start_training_pipeline()
+        start_training_pipeline()
         output = start_batch_prediction(input_file_path=filepath)
         print(output)
 
