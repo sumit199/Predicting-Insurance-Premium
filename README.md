@@ -1,4 +1,4 @@
-# Predicting-Insurance-Premium
+# Insurance-Premium-Prediction
 
 ### Introduction
 
